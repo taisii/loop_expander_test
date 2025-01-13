@@ -1,0 +1,5 @@
+# Ignore ciao/ directory and its contents
+ciao/
+
+# Ignore loop_expander/ directory and its contents
+loop_expander/
