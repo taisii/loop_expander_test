@@ -11,10 +11,6 @@ RUN apt-get install -y curl python3 python3-pip
 RUN apt-get install build-essential
 RUN apt-get install -y emacs
 
-# Goのインストール
-ARG GO_VERSION=1.23.3  # 必要であればバージョンを指定
-RUN apt-get install -y golang-go
-
 # 作業ディレクトリを設定
 WORKDIR /app
 COPY . /app
