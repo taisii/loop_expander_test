@@ -1,6 +1,3 @@
-[submodule "loop_expnader"]
-	path = loop_expnader
-	url = git@github.com:taisii/loop_expander.git
 [submodule "muasm_translator"]
 	path = muasm_translator
 	url = git@github.com:spectector/muasm_translator.git
@@ -10,3 +7,6 @@
 [submodule "concolic"]
 	path = concolic
 	url = git@github.com:ciao-lang/concolic.git
+[submodule "loop_expander"]
+	path = loop_expander
+	url = git@github.com:taisii/loop_expander.git
