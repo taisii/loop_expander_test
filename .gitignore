@@ -1,5 +1,5 @@
-# Ignore ciao/ directory and its contents
-ciao/
-
-# Ignore loop_expander/ directory and its contents
+# Ignore cloned repository
+concolic/
+muasm_translator/
+spectector/
 loop_expander/
