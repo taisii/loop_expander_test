@@ -1,0 +1,12 @@
+[submodule "loop_expnader"]
+	path = loop_expnader
+	url = git@github.com:taisii/loop_expander.git
+[submodule "muasm_translator"]
+	path = muasm_translator
+	url = git@github.com:spectector/muasm_translator.git
+[submodule "spectector"]
+	path = spectector
+	url = git@github.com:spectector/spectector.git
+[submodule "concolic"]
+	path = concolic
+	url = git@github.com:ciao-lang/concolic.git
