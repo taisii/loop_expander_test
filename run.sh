@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Ciao をインストール
-curl https://ciao-lang.org/boot -sSfL | sh
+# spectector と loop_expander をビルド
+ciao build -r spectector
+cd loop_expander
+go build -o go-project
+cd ..
 
-# SPECTECTORをビルド
-export CIAOPATH=/app
-# ciao build -r spectector
-
-bash
 # main.py を実行
-# python3 main.py
+python3 main.py
