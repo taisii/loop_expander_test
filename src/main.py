@@ -5,7 +5,11 @@ import time
 
 import pandas as pd
 from loop_expander import run_loop_expander
-from metrics import analyze_spectector_result, compare_and_store_metrics, compare_metrics, save_metrics
+from metrics import (
+    analyze_spectector_result,
+    compare_and_store_metrics,
+    save_metrics,
+)
 from spectector import run_spectector, save_spectector_output
 
 timeout = 2
