@@ -2,8 +2,10 @@ import glob
 import logging
 import os
 import time
+
+import pandas as pd
 from loop_expander import run_loop_expander
-from metrics import save_metrics
+from metrics import analyze_spectector_result, compare_and_store_metrics, compare_metrics, save_metrics
 from spectector import run_spectector, save_spectector_output
 
 timeout = 2
@@ -71,9 +73,7 @@ def process_single_file(
                 save_spectector_output(
                     test_file, spectector_result, algorithm, loop_expansion_limit
                 )
-                # spectector_metrics = parse_spectector_output(spectector_result.stdout)
-                # metrics.update(spectector_metrics)
-                metrics["successful"] = True
+                analyze_spectector_result(spectector_result, metrics)
 
             os.remove(temp_file)
 
@@ -96,9 +96,7 @@ def process_single_file(
 
             if spectector_result.stdout:
                 save_spectector_output(test_file, spectector_result, algorithm)
-                # spectector_metrics = parse_spectector_output(spectector_result.stdout)
-                # metrics.update(spectector_metrics)
-                metrics["successful"] = True
+                analyze_spectector_result(spectector_result, metrics)
 
         else:
             logging.error(f"Error: Unknown algorithm: {algorithm}")
@@ -117,14 +115,40 @@ def main():
     /tests/sample 内の各 .muasm ファイルに対して、
     process_single_file 関数を適用する。
     """
-    test_dir = "./../tests/sample"  # テストファイルが格納されているディレクトリ
+    test_dir = "./../tests"  # テストファイルが格納されているディレクトリ
+
+    # 結果を格納するDataFrameを作成
+    results_df = pd.DataFrame()
 
     # /tests/sample 内の .muasm ファイルをすべて取得
-    test_files = glob.glob(os.path.join(test_dir, "*.muasm"))
+    test_files = glob.glob(os.path.join(test_dir, "**/*.muasm"), recursive=True)
 
+    # .muasmファイルに対してテストを実行
     for test_file in test_files:
-        metrics = process_single_file(test_file, "baseline")
-        save_metrics(metrics, test_file, "baseline")
+        metrics_proposed = process_single_file(test_file, "proposed")
+        save_metrics(metrics_proposed, test_file, "proposed")
+        metrics_baseline = process_single_file(test_file, "baseline")
+        save_metrics(metrics_baseline, test_file, "baseline")
+
+        # テスト結果を分析
+        metrics_file_proposed = os.path.splitext(test_file)[0] + ".proposed.metrics"
+        metrics_file_baseline = os.path.splitext(test_file)[0] + ".baseline.metrics"
+        # compare_metrics(metrics_file_proposed, metrics_file_baseline)
+
+        # 比較結果をDataFrameに追加
+        comparison_result = compare_and_store_metrics(
+            metrics_file_proposed, metrics_file_baseline, test_file
+        )
+        results_df = pd.concat([results_df, comparison_result], ignore_index=True)
+
+    # 結果を一覧表示
+    print("\nComparison Results (All Test Cases):")
+    print(results_df)
+
+    # 数値メトリクスの平均を計算して表示
+    print("\nAverage Comparison Results (Numerical Metrics):")
+    numerical_metrics = results_df.select_dtypes(include="number")
+    print(numerical_metrics.mean())
 
 
 if __name__ == "__main__":
