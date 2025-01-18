@@ -122,11 +122,7 @@ def main():
     test_files = glob.glob(os.path.join(test_dir, "*.muasm"))
 
     for test_file in test_files:
-        # process_single_file(test_file)
-        result = run_spectector(test_file)
-        if result:
-            # 結果をファイルに保存
-            save_spectector_output(test_file, result)
+        process_single_file(test_file)
 
 
 if __name__ == "__main__":
