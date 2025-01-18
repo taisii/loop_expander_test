@@ -1,1 +1,5 @@
-build
+build/
+.vscode/
+*.out
+*.metrics
+__pycache__/
