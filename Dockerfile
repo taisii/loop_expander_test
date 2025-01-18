@@ -1,5 +1,5 @@
 # ベースイメージとして Ubuntu の最新版を指定
-FROM arm64v8/ubuntu:latest
+FROM ubuntu:latest
 
 # apt パッケージの情報を更新
 RUN apt-get update

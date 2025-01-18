@@ -11,7 +11,7 @@ def run_loop_expander(input_file):
         input_file: 入力ファイルのパス
 
     Returns:
-        subprocess.CompletedProcess: loop_expander の実行結果
+        str: loop_expander の標準出力 (エラー時は None)
     """
     try:
         # loop_expander を実行
@@ -21,7 +21,7 @@ def run_loop_expander(input_file):
             text=True,
             check=True,  # エラー時に例外を発生させる
         )
-        return process
+        return process.stdout
     except subprocess.CalledProcessError as e:
         print(f"Error running loop_expander on {input_file}:")
         print(f"  Return code: {e.returncode}")
@@ -39,7 +39,7 @@ def run_spectector(input_file, options=""):
         options: spectector に渡す追加オプション (例: "-n -a reach")
 
     Returns:
-        subprocess.CompletedProcess: spectector の実行結果
+        subprocess.CompletedProcess: spectector の実行結果 (エラー時は None)
     """
     try:
         # spectector を実行
@@ -62,60 +62,71 @@ def run_spectector(input_file, options=""):
         return None
 
 
+def save_spectector_output(test_file, spectector_result):
+    """
+    spectector の結果をファイルに保存する関数。
+
+    Args:
+        test_file: テストファイルのパス
+        spectector_result: spectector の実行結果 (subprocess.CompletedProcess)
+    """
+    output_filename = os.path.splitext(test_file)[0] + ".out"
+    with open(output_filename, "w") as f:
+        f.write("Stdout:\n")
+        f.write(spectector_result.stdout)
+        if spectector_result.stderr:
+            f.write("\nStderr:\n")
+            f.write(spectector_result.stderr)
+    print(f"  Spectector output saved to: {output_filename}")
+
+
+def process_single_file(test_file):
+    """
+    単一の .muasm ファイルを処理する関数。
+    loop_expander を実行し、その結果を spectector に渡す。
+
+    Args:
+        test_file: 処理する .muasm ファイルのパス
+    """
+    print(f"Processing: {test_file}")
+
+    # 1. loop_expander を実行
+    loop_expander_output = run_loop_expander(test_file)
+
+    if loop_expander_output:
+        # loop_expander の標準出力を一時ファイルに保存
+        temp_file = test_file + ".loop_expanded.muasm"
+        with open(temp_file, "w") as f:
+            f.write(loop_expander_output)
+
+        # 2. spectector を実行 (loop_expander の出力を入力として使用)
+        print("  Running spectector on expanded code...")
+        spectector_result = run_spectector(temp_file)  # デフォルトのオプションで実行
+
+        if spectector_result:
+            # 結果をファイルに保存
+            save_spectector_output(test_file, spectector_result)
+
+        # 一時ファイルを削除
+        os.remove(temp_file)
+
+
 def main():
     """
-    /tests/spectector_case 内の各ファイルに対して loop_expander を実行し、
-    その出力を spectector に入力として与える。
+    /tests/sample 内の各 .muasm ファイルに対して、
+    process_single_file 関数を適用する。
     """
     test_dir = "./tests/sample"  # テストファイルが格納されているディレクトリ
 
-    # /tests/spectector_case 内のファイルをすべて取得
-    test_files = glob.glob(os.path.join(test_dir, "*"))
+    # /tests/sample 内の .muasm ファイルをすべて取得
+    test_files = glob.glob(os.path.join(test_dir, "*.muasm"))
 
     for test_file in test_files:
-        if os.path.isfile(test_file) and test_file.endswith(
-            ".muasm"
-        ):  # 拡張子 .muasm のファイルのみを対象とする
-            print(f"Processing: {test_file}")
-
-            # 1. loop_expander を実行
-            loop_expander_result = run_loop_expander(test_file)
-
-            if loop_expander_result:
-                # loop_expander の標準出力を一時ファイルに保存
-                temp_file = test_file + ".loop_expanded.muasm"
-                with open(temp_file, "w") as f:
-                    f.write(loop_expander_result.stdout)
-
-                # 2. spectector を実行 (loop_expander の出力を入力として使用)
-                print("  Running spectector on expanded code...")
-                spectector_result = run_spectector(
-                    temp_file
-                )  # デフォルトのオプションで実行
-
-                if spectector_result:
-                    print(f"  Spectector Stdout:\n{spectector_result.stdout}")
-                    if spectector_result.stderr:
-                        print(
-                            f"  Spectector Warnings/Errors:\n{spectector_result.stderr}"
-                        )
-
-                # 3. 必要に応じて concolic testing や non-interference checking を実行
-                # 例: concolic testing (reach)
-                print("  Running spectector with concolic testing (reach)...")
-                spectector_concolic_result = run_spectector(temp_file, "-n -a reach")
-
-                if spectector_concolic_result:
-                    print(
-                        f"  Spectector (Concolic) Stdout:\n{spectector_concolic_result.stdout}"
-                    )
-                    if spectector_concolic_result.stderr:
-                        print(
-                            f"  Spectector (Concolic) Warnings/Errors:\n{spectector_concolic_result.stderr}"
-                        )
-
-                # 一時ファイルを削除
-                os.remove(temp_file)
+        # process_single_file(test_file)
+        result = run_spectector(test_file)
+        if result:
+            # 結果をファイルに保存
+            save_spectector_output(test_file, result)
 
 
 if __name__ == "__main__":
