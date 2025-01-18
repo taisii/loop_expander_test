@@ -7,4 +7,5 @@ go build -o go-project
 cd ..
 
 # main.py を実行
+cd src
 python3 main.py
