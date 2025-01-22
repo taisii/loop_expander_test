@@ -61,6 +61,8 @@ def process_single_file(
             spectector_result = run_spectector(temp_file, timeout, spectector_options)
             metrics["spectector_time"] = spectector_result.execution_time
 
+            os.remove(temp_file)
+
             if spectector_result.timeout:
                 logging.warning("Spectector timed out!")
                 metrics["timeout"] = True
@@ -78,8 +80,6 @@ def process_single_file(
                     test_file, spectector_result, algorithm, loop_expansion_limit
                 )
                 analyze_spectector_result(spectector_result, metrics)
-
-            os.remove(temp_file)
 
         elif algorithm == "baseline":
             logging.info("  Running spectector on original code...")
