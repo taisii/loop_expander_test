@@ -12,7 +12,7 @@
 
 1.  Ciao, Go, Python を実行できる環境を作成してください。
 
-    Ciao の環境構築については[公式サイト](https://ciao-lang.org/ciao/build/doc/ciao.html/Install.html#Checking%20for%20correct%20installation)を参考にしてください。
+    Ciao の環境構築については[公式サイト](https://ciao-lang.org/ciao/build/doc/ciao.html/Install.html)を参考にしてください。
 
 2.  このリポジトリをクローンします。
 
