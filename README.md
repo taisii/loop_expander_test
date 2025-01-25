@@ -17,7 +17,7 @@
 2.  このリポジトリをクローンします。
 
     ```bash
-    git pull -r git@github.com:taisii/loop_expander_test.git
+    git clone -r git@github.com:taisii/loop_expander_test.git
     ```
 
 3.  `run.sh` を実行して、テストを実行します。
