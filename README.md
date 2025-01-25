@@ -1,26 +1,26 @@
-# 論文タイトル
+# Loop_expander_test
 
-このリポジトリは、論文「[SNI 検出アルゴリズムへの単純ループへの拡張]」で提案されている、ループ展開アルゴリズムと SPECTECTOR を統合した SNI 検出システムのテスト環境を提供します。
+このリポジトリは、論文「SNI 検出アルゴリズムへの単純ループへの拡張」で提案されている、ループ展開アルゴリズムと SPECTECTOR を統合した SNI 検出システムのテスト環境を提供します。
 
 ## 構成
 
-- `testcases/`: テストケース集。SPECTECTOR のレポジトリから取ってきたものと自作のものが含まれます。
-- `main.py`: テスト実行スクリプト。
+- `testcases/`: テストケース集。
+- `src/`: テスト実行スクリプト群。
+- `run.sh`: ビルドとテストの実行を行うためのスクリプト
 
 ## 環境構築とテストの実行方法
 
-1.  このリポジトリをクローンします。
+1.  Ciao, Go, Python を実行できる環境を作成してください。
+
+    Ciao の環境構築については[公式サイト](https://ciao-lang.org/ciao/build/doc/ciao.html/Install.html#Checking%20for%20correct%20installation)を参考にしてください。
+
+2.  このリポジトリをクローンします。
 
     ```bash
-    git@github.com:taisii/loop_expander_test.git
+    git pull -r git@github.com:taisii/loop_expander_test.git
     ```
 
-2.  `loop_expander` と `SPECTECTOR` をそれぞれのリポジトリの指示に従ってクローン及びビルドしてください。
-
-    - `loop_expander`: https://github.com/spectector/spectector
-    - `SPECTECTOR`: https://github.com/taisii/loop_expander
-
-3.  `main.py` を実行して、テストを実行します。
+3.  `run.sh` を実行して、テストを実行します。
     ```bash
-    python3 main.py
+    ./run.sh
     ```
